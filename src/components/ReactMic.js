@@ -23,79 +23,79 @@ export default class ReactMic extends Component {
 
   render() {
     return (
-      <div class="root_padding">
-        <div class="vr-voice-recorder-container">
+      <div className="root_padding">
+        <div className="vr-voice-recorder-container">
           {
             //allow-mic wait-record reset [active (active paused) add class below] processing preview
           }
-          <div class={`voice-recorder ${this.state.recorder_state}`}>
-            <div class="allow-mic-message ">
-              <div class="mic-icon">
+          <div className={`voice-recorder ${this.state.recorder_state}`}>
+            <div className="allow-mic-message ">
+              <div className="mic-icon">
                 <img src={mic_not_allow} alt="mic-not-allow-icon" />
               </div>
               <div>Please allow access to your microphone to continue…</div>
             </div>
-            <div class="reaching-max-time-msg">
-              <div class="msg">
+            <div className="reaching-max-time-msg">
+              <div className="msg">
                 {" "}
                 You are reaching maximum record time. Recording will be stopped
                 in
-                <span class="time"></span>
+                <span className="time"></span>
               </div>
             </div>
-            <div class="press-mic-message">
+            <div className="press-mic-message">
               <div>Click the button to start recording…</div>
             </div>
-            <div class="waveform-container">
-              <div class="audio-editor">
-                <div class="top-controls">
-                  <button class="btn-quit">
+            <div className="waveform-container">
+              <div className="audio-editor">
+                <div className="top-controls">
+                  <button className="btn-quit">
                     <img src={cross_icon} alt="quit-icon" />
                   </button>
                 </div>
-                <div class="canvas-and-controls">
-                  <div class="waveform-canvas-container">
-                    <div class="selection-area"></div>
-                    <div class="canvas-wrapper">
+                <div className="canvas-and-controls">
+                  <div className="waveform-canvas-container">
+                    <div className="selection-area"></div>
+                    <div className="canvas-wrapper">
                       <CanvasControls
                         className="waveform_canvas"
                         width={1366}
                         height={120}
                       />
                     </div>
-                    <div class="play-progress-line"></div>
+                    <div className="play-progress-line"></div>
                   </div>
-                  <div class="control-bars-wrapper">
-                    <div class="record-controls">
-                      <div class="control-bar cb-left"></div>
-                      <div class="control-bar cb-right"></div>
+                  <div className="control-bars-wrapper">
+                    <div className="record-controls">
+                      <div className="control-bar cb-left"></div>
+                      <div className="control-bar cb-right"></div>
                     </div>
                   </div>
                 </div>
-                <div class="controls flex">
-                  <div class="flex-1">
-                    <button class="play-button">
-                      <div class="tooltip">
+                <div className="controls flex">
+                  <div className="flex-1">
+                    <button className="play-button">
+                      <div className="tooltip">
                         <span>Play</span>
-                        <span class="space">Space</span>
+                        <span className="space">Space</span>
                       </div>
-                      <div class="arrow"></div>
+                      <div className="arrow"></div>
                     </button>
-                    <button class="fade-in"></button>
-                    <button class="fade-out"></button>
+                    <button className="fade-in"></button>
+                    <button className="fade-out"></button>
                   </div>
-                  <div class="block-save flex">
-                    <div class="flex-right">
-                      <button class="btn-save">
-                        <div class="save-label">Save</div>
-                        <div class="save-processing">
-                          <div class="save-processing-bg"></div>
-                          <div class="save-processing-label">Processing...</div>
+                  <div className="block-save flex">
+                    <div className="flex-right">
+                      <button className="btn-save">
+                        <div className="save-label">Save</div>
+                        <div className="save-processing">
+                          <div className="save-processing-bg"></div>
+                          <div className="save-processing-label">Processing...</div>
                         </div>
                       </button>
-                      <div class="dropdown">
-                        <button class="btn-save-gdrive">Google Drive</button>
-                        <button class="btn-save-dropbox">Dropbox</button>
+                      <div className="dropdown">
+                        <button className="btn-save-gdrive">Google Drive</button>
+                        <button className="btn-save-dropbox">Dropbox</button>
                       </div>
                     </div>
                   </div>
@@ -103,28 +103,28 @@ export default class ReactMic extends Component {
                 {
                   //visible below to show it
                 }
-                <div class="dialog-quit">
-                  <div class="label-quit">
+                <div className="dialog-quit">
+                  <div className="label-quit">
                     Are you sure you want to finish editing?
                   </div>
-                  <button class="btn-quit-accept">Yes</button>
-                  <button class="btn-quit-deny">Cancel</button>
+                  <button className="btn-quit-accept">Yes</button>
+                  <button className="btn-quit-deny">Cancel</button>
                 </div>
               </div>
             </div>
-            <div class="bottom-menu">
-              <div class="mode-switch flex-1 flex-left"></div>
-              <div class="flex-1 flex-center">
+            <div className="bottom-menu">
+              <div className="mode-switch flex-1 flex-left"></div>
+              <div className="flex-1 flex-center">
                 {
                   //active class below
                 }
                 <div
-                  class={`btn-record ${(this.state.recorder_state ==
+                  className={`btn-record ${(this.state.recorder_state ==
                     recorderStates.active ||
                     this.state.recorder_state ==
                       recorderStates.active_paused) &&
                     "active"}`}
-                    
+
                   onClick={() => {
                     if (
                       this.state.recorder_state ===
@@ -135,6 +135,10 @@ export default class ReactMic extends Component {
                       this.setState({
                         recorder_state: recorderStates.processing
                       });
+                      //currently moving to preview after 1 sec 
+                      setTimeout(function(){
+                        this.setState({recorder_state:recorderStates.preview});
+                   }.bind(this),1000); 
                     } else if (
                       this.state.recorder_state === recorderStates.wait_record
                     ) {
@@ -144,21 +148,21 @@ export default class ReactMic extends Component {
                     }
                   }}
                 >
-                  <div class="icn-record">
-                    <i class="icn-record-inner"></i>
+                  <div className="icn-record">
+                    <i className="icn-record-inner"></i>
                     <img src={record_icon} alt="record_icon" />
                   </div>
-                  <div class="record-timer"> 00:00 </div>
-                  <div class="processing-info">
-                    <div class="processing-info-inner"></div>
-                    <div class="processing-text">
-                      <span class="the-text">Processing...</span>
+                  <div className="record-timer"> 00:00 </div>
+                  <div className="processing-info">
+                    <div className="processing-info-inner"></div>
+                    <div className="processing-text">
+                      <span className="the-text">Processing...</span>
                     </div>
                   </div>
                 </div>
                 <button
                   type="button"
-                  class="btn-pause-record"
+                  className="btn-pause-record"
                   onClick={() => {
                     if (
                       this.state.recorder_state === recorderStates.active_paused
@@ -173,16 +177,16 @@ export default class ReactMic extends Component {
                     }
                   }}
                 >
-                  <i class="icn-pause-record">
+                  <i className="icn-pause-record">
                     <img src={pause} alt="pause_icon" />
                   </i>
                 </button>
               </div>
-              <div class="flex-1 flex-right">
-                <div class="settings">
+              <div className="flex-1 flex-right">
+                <div className="settings">
                   <button
                     type="button"
-                    class="btn-settings"
+                    className="btn-settings"
                     onClick={() => {
                       this.setState(prevState => ({
                         dialog_settings: !prevState.dialog_settings
@@ -192,29 +196,29 @@ export default class ReactMic extends Component {
                     <img src={settings} alt="settings" />
                   </button>
                   <div
-                    class={`dialog-settings ${!this.state.dialog_settings &&
+                    className={`dialog-settings ${!this.state.dialog_settings &&
                       "hidden"}`}
                   >
-                    <div class="settings-group mic-enable active">
-                      <div class="settings-header wrapper">
+                    <div className="settings-group mic-enable active">
+                      <div className="settings-header wrapper">
                         <span>Microphone</span>
                       </div>
-                      <div class="settings-mics visible">
-                        <ul class="select-mic">
+                      <div className="settings-mics visible">
+                        <ul className="select-mic">
                           <li
                             data-device-id="default"
                             data-device-label="Default"
-                            class="mic-item active"
+                            className="mic-item active"
                           >
-                            <i class="a-indicator"></i>
+                            <i className="a-indicator"></i>
                             <span>Default</span>
                           </li>
                           <li
                             data-device-id="a1608f2b21bf2c55b5583882607c9e1d7d5b0cac5e7a0737217c097730dd2d09"
                             data-device-label="Built-in Audio Analog Stereo"
-                            class="mic-item"
+                            className="mic-item"
                           >
-                            <i class="a-indicator"></i>
+                            <i className="a-indicator"></i>
                             <span>Built-in Audio Analog Stereo</span>
                           </li>
                         </ul>
@@ -224,10 +228,10 @@ export default class ReactMic extends Component {
                 </div>
               </div>
             </div>
-            <div class="alert error browser-not-supported">
-              <div class="alert_icon"></div>
-              <div class="h">Your browser is not supported</div>
-              <div class="desc">
+            <div className="alert error browser-not-supported">
+              <div className="alert_icon"></div>
+              <div className="h">Your browser is not supported</div>
+              <div className="desc">
                 To use this website, we recommend the latest version of
                 <a
                   href="https://www.google.com/chrome/browser/desktop/index.html"
@@ -247,14 +251,14 @@ export default class ReactMic extends Component {
                 .
               </div>
             </div>
-            <div class="alert error common" id="alert-template">
-              <div class="alert_icon"></div>
-              <div class="desc only hidden no-mics">
+            <div className="alert error common" id="alert-template">
+              <div className="alert_icon"></div>
+              <div className="desc only hidden no-mics">
                 No microphones found. Sound recording is unavailable.
               </div>
-              <div class="desc only hidden internal-error"></div>
-              <div class="buttons">
-                <button class="btn white btn-alert-ok">Ok</button>
+              <div className="desc only hidden internal-error"></div>
+              <div className="buttons">
+                <button className="btn white btn-alert-ok">Ok</button>
               </div>
             </div>
           </div>
