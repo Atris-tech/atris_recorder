@@ -7,15 +7,19 @@ import pause from "../assets/pause.svg";
 import settings from "../assets/settings.svg";
 import CanvasControls from "./CanvasControls";
 
+let recorderStates = {
+  allow_mic: "allow_mic",
+  wait_record: "wait-record",
+  active: "active",
+  active_paused: "active paused",
+  processing: "processing",
+  preview: "preview"
+};
 export default class ReactMic extends Component {
-
-state = {
-
-}
-
-reorderStates = {
-    allow_mic: 
-}
+  state = {
+    recorder_state: recorderStates.wait_record,
+    dialog_settings: false
+  };
 
   render() {
     return (
@@ -24,7 +28,7 @@ reorderStates = {
           {
             //allow-mic wait-record reset [active (active paused) add class below] processing preview
           }
-          <div class="voice-recorder active ">
+          <div class={`voice-recorder ${this.state.recorder_state}`}>
             <div class="allow-mic-message ">
               <div class="mic-icon">
                 <img src={mic_not_allow} alt="mic-not-allow-icon" />
@@ -53,12 +57,11 @@ reorderStates = {
                   <div class="waveform-canvas-container">
                     <div class="selection-area"></div>
                     <div class="canvas-wrapper">
-                      <CanvasControls className="waveform_canvas" width={1366} height={120}/>
-                      {/* <canvas
-                        class="waveform_canvas"
-                        width="1366"
-                        height="120"
-                      ></canvas> */}
+                      <CanvasControls
+                        className="waveform_canvas"
+                        width={1366}
+                        height={120}
+                      />
                     </div>
                     <div class="play-progress-line"></div>
                   </div>
@@ -115,11 +118,36 @@ reorderStates = {
                 {
                   //active class below
                 }
-                <div class="btn-record">
-                  <i class="icn-record">
+                <div
+                  class={`btn-record ${(this.state.recorder_state ==
+                    recorderStates.active ||
+                    this.state.recorder_state ==
+                      recorderStates.active_paused) &&
+                    "active"}`}
+                    
+                  onClick={() => {
+                    if (
+                      this.state.recorder_state ===
+                        recorderStates.active_paused ||
+                      this.state.recorder_state === recorderStates.active
+                    ) {
+                      //means recording stoped, can also do redirect callbacks here
+                      this.setState({
+                        recorder_state: recorderStates.processing
+                      });
+                    } else if (
+                      this.state.recorder_state === recorderStates.wait_record
+                    ) {
+                      this.setState({
+                        recorder_state: recorderStates.active
+                      });
+                    }
+                  }}
+                >
+                  <div class="icn-record">
                     <i class="icn-record-inner"></i>
                     <img src={record_icon} alt="record_icon" />
-                  </i>
+                  </div>
                   <div class="record-timer"> 00:00 </div>
                   <div class="processing-info">
                     <div class="processing-info-inner"></div>
@@ -128,7 +156,23 @@ reorderStates = {
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn-pause-record">
+                <button
+                  type="button"
+                  class="btn-pause-record"
+                  onClick={() => {
+                    if (
+                      this.state.recorder_state === recorderStates.active_paused
+                    ) {
+                      this.setState({
+                        recorder_state: recorderStates.active
+                      });
+                    } else {
+                      this.setState({
+                        recorder_state: recorderStates.active_paused
+                      });
+                    }
+                  }}
+                >
                   <i class="icn-pause-record">
                     <img src={pause} alt="pause_icon" />
                   </i>
@@ -136,10 +180,21 @@ reorderStates = {
               </div>
               <div class="flex-1 flex-right">
                 <div class="settings">
-                  <button type="button" class="btn-settings">
+                  <button
+                    type="button"
+                    class="btn-settings"
+                    onClick={() => {
+                      this.setState(prevState => ({
+                        dialog_settings: !prevState.dialog_settings
+                      }));
+                    }}
+                  >
                     <img src={settings} alt="settings" />
                   </button>
-                  <div class="dialog-settings hidden">
+                  <div
+                    class={`dialog-settings ${!this.state.dialog_settings &&
+                      "hidden"}`}
+                  >
                     <div class="settings-group mic-enable active">
                       <div class="settings-header wrapper">
                         <span>Microphone</span>

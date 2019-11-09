@@ -816,7 +816,7 @@
     opacity: 1
   }
   
-  .voice-recorder .bottom-menu .settings .btn-settings:hover path {
+  .voice-recorder .bottom-menu .settings .btn-settings:hover img {
     transform-origin: center center;
     transform: rotate(30deg)
   }
@@ -856,7 +856,7 @@
     float: left
   }
   
-  .voice-recorder .alert .btn-close:hover svg,.voice-recorder .photo-preview .btn-close:hover svg,.voice-recorder .processing-info .btn-cancel-proccessing:hover,.voice-recorder .video-player-container .btn-close:hover svg {
+  .voice-recorder .alert .btn-close:hover img,.voice-recorder .photo-preview .btn-close:hover img,.voice-recorder .processing-info .btn-cancel-proccessing:hover,.voice-recorder .video-player-container .btn-close:hover img {
     opacity: 1
   }
   
@@ -890,7 +890,7 @@
     transition: all .2s
   }
   
-  .voice-recorder .alert .btn-close svg,.voice-recorder .photo-preview .btn-close svg,.voice-recorder .video-player-container .btn-close svg {
+  .voice-recorder .alert .btn-close img,.voice-recorder .photo-preview .btn-close img,.voice-recorder .video-player-container .btn-close img {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1075,7 +1075,7 @@
     width: 29px;
     height: 24px;
     display: inline-block;
-    background-image: url('data:image/svg+xml;utf8,<svg class="alert_icon" width="29" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M1.734 24h25.479a1 1 0 0 0 .865-1.501L15.34.495a1 1 0 0 0-1.73 0L.868 22.499A1 1 0 0 0 1.734 24zm14.055-3.947h-2.631V17.42h2.631v2.632zm0-5.264h-2.631V9.526h2.631v5.263z" fill="#F03" fill-rule="nonzero" /></svg>');
+    background-image: url('data:image/img+xml;utf8,<img class="alert_icon" width="29" height="24" xmlns="http://www.w3.org/2000/img"><path d="M1.734 24h25.479a1 1 0 0 0 .865-1.501L15.34.495a1 1 0 0 0-1.73 0L.868 22.499A1 1 0 0 0 1.734 24zm14.055-3.947h-2.631V17.42h2.631v2.632zm0-5.264h-2.631V9.526h2.631v5.263z" fill="#F03" fill-rule="nonzero" /></img>');
     opacity: .7
   }
   
