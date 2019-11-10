@@ -31,9 +31,11 @@ export default class CanvasControls extends Component {
       onBlock,
       audioElem,
       audioBitsPerSecond,
-      mimeType
+      mimeType,
+      setRef
     } = this.props;
     const { visualizer } = this.refs;
+    setRef(visualizer);
     const canvas = visualizer;
     const canvasCtx = canvas.getContext("2d");
     const options = {
@@ -158,7 +160,7 @@ export default class CanvasControls extends Component {
     const { microphoneRecorder, canvasCtx } = this.state;
 
     if (isRecording) {
-      if (microphoneRecorder && recorder_state !== "active" ) {
+      if (microphoneRecorder && recorder_state !== "active") {
         microphoneRecorder.startRecording(startRecording);
       }
     } else {

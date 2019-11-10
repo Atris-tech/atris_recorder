@@ -213,21 +213,23 @@ export class MicrophoneRecorder {
     }
   }
 
-  onStop(error) {
+  onStop = error => {
     console.log("onStop called");
+    let arrayBuff;
     // mediaRecorder.save();
     let blobURL;
     // const blob = new Blob(chunks, { type: mediaOptions.mimeType });
     window.ConcatenateBlobs(chunks, "audio/wav", function(resultingBlob) {
       console.log(resultingBlob, "res of concatenate blob");
-      blobURL = window.URL.createObjectURL(resultingBlob);
+      // blobURL = window.URL.createObjectURL(resultingBlob);
+
       if (onStopCallback) {
-        onStopCallback(blobURL);
+        onStopCallback(resultingBlob);
       }
       if (onSaveCallback) {
-        onSaveCallback(blobURL);
+        onSaveCallback(resultingBlob);
       }
-      chunks = [];
+      chunks = []; //clear the blob chunks
     });
-  }
+  };
 }

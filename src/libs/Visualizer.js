@@ -3,15 +3,31 @@ import AudioContext from "./AudioContext";
 let drawVisual;
 
 const Visualizer = {
-  visualizeSineWave(
+  playerSineWave(
     canvasCtx,
     canvas,
     width,
     height,
     backgroundColor,
-    strokeColor
+    strokeColor,
+    buffer
   ) {
+    console.log("playerSineWave in ");
+   
+    const BaseAudioContext = AudioContext.getAudioContext();
+    var audioBufferSouceNode = BaseAudioContext.createBufferSource();
+
     let analyser = AudioContext.getAnalyser();
+
+    //connect the source to the analyser
+    audioBufferSouceNode.connect(analyser);
+    //connect the analyser to the destination(the speaker), or we won't hear the sound
+    analyser.connect(BaseAudioContext.destination);
+    //then assign the buffer to the buffer source node
+    audioBufferSouceNode.buffer = buffer;
+
+    console.log(buffer, "buffyyyy yyy");
+    audioBufferSouceNode.start(0); //play the audio
 
     const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);
@@ -20,6 +36,7 @@ const Visualizer = {
 
     function draw() {
       drawVisual = requestAnimationFrame(draw);
+      console.log(drawVisual, "drawVisual ss");
 
       analyser = AudioContext.getAnalyser();
 
@@ -29,7 +46,14 @@ const Visualizer = {
       // canvasCtx.fillRect(0, 0, width, height);
 
       // Create gradient
-      let grd = canvasCtx.createRadialGradient(135.0, 135.0, 0.0, 135.0, 135.0, 150.0);
+      let grd = canvasCtx.createRadialGradient(
+        135.0,
+        135.0,
+        0.0,
+        135.0,
+        135.0,
+        150.0
+      );
 
       // Add colors
       grd.addColorStop(0.0, "rgba(32, 44, 100, 1.000)");
@@ -65,11 +89,82 @@ const Visualizer = {
 
       canvasCtx.lineTo(canvas.width, canvas.height / 2);
       canvasCtx.stroke();
-      
     }
 
     draw();
-    
+  },
+  visualizeSineWave(
+    canvasCtx,
+    canvas,
+    width,
+    height,
+    backgroundColor,
+    strokeColor
+  ) {
+    let analyser = AudioContext.getAnalyser();
+
+    const bufferLength = analyser.fftSize;
+    const dataArray = new Uint8Array(bufferLength);
+
+    canvasCtx.clearRect(0, 0, width, height);
+
+    function draw() {
+      drawVisual = requestAnimationFrame(draw);
+
+      analyser = AudioContext.getAnalyser();
+
+      analyser.getByteTimeDomainData(dataArray);
+
+      // canvasCtx.fillStyle = backgroundColor;
+      // canvasCtx.fillRect(0, 0, width, height);
+
+      // Create gradient
+      let grd = canvasCtx.createRadialGradient(
+        135.0,
+        135.0,
+        0.0,
+        135.0,
+        135.0,
+        150.0
+      );
+
+      // Add colors
+      grd.addColorStop(0.0, "rgba(32, 44, 100, 1.000)");
+      grd.addColorStop(0.471, "rgba(26, 44, 127, 1.000)");
+      grd.addColorStop(1.0, "rgba(32, 44, 100, 1.000)");
+
+      // Fill with gradient
+      canvasCtx.fillStyle = grd;
+      canvasCtx.fillRect(0, 0, width, height);
+
+      // canvasCtx.fill();
+
+      canvasCtx.lineWidth = 2;
+      canvasCtx.strokeStyle = strokeColor;
+
+      canvasCtx.beginPath();
+
+      const sliceWidth = (width * 1.0) / bufferLength;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * height) / 2;
+
+        if (i === 0) {
+          canvasCtx.moveTo(x, y);
+        } else {
+          canvasCtx.lineTo(x, y);
+        }
+
+        x += sliceWidth;
+      }
+
+      canvasCtx.lineTo(canvas.width, canvas.height / 2);
+      canvasCtx.stroke();
+    }
+
+    draw();
   },
 
   visualizeFrequencyBars(

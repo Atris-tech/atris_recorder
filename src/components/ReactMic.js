@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { blobToArrayBuffer } from "blob-util";
 import "./ReactMic.css";
 import mic_not_allow from "../assets/mic-not-allow.svg";
 import cross_icon from "../assets/cross-icon.svg";
@@ -6,6 +7,8 @@ import record_icon from "../assets/record.svg";
 import pause from "../assets/pause.svg";
 import settings from "../assets/settings.svg";
 import CanvasControls from "./CanvasControls";
+import AudioContext from "../libs/AudioContext";
+import Visualizer from "../libs/Visualizer";
 
 let recorderStates = {
   allow_mic: "allow_mic",
@@ -41,9 +44,58 @@ export default class ReactMic extends Component {
     console.log("You can tap into the onStart callback");
   };
 
-  onStop = blobURL => {
-    this.setState({ blobURL: blobURL });
-    console.log(blobURL);
+  setRef = childRef => {
+    this.canvasRef = childRef;
+  };
+
+  onStop = blobObject => {
+    // let blobURL = window.URL.createObjectURL(blobObject);
+
+    // this.setState({ blobURL: blobURL });
+    /* Use the await keyword to wait for the Promise to resolve */
+    // console.log(blobObject, "before array buff");
+
+    blobToArrayBuffer(blobObject)
+      .then(function(arrayBuff) {
+        console.log(arrayBuff, "xxx xx ");
+        const test1 = arrayBuff => {
+          console.log("test fxn called", arrayBuff);
+
+          const canvas = this.canvasRef;
+          const canvasCtx = canvas.getContext("2d");
+          let width = 1366;
+          let height = 120;
+          let backgroundColor = "";
+          let strokeColor = "#07cf89";
+          const test1 = arrayBuff => {
+            console.log("test fxn called", arrayBuff);
+          };
+          test1(arrayBuff);
+          AudioContext.decodeAudioData(arrayBuff)
+            .then(buffer => {
+              Visualizer.playerSineWave(
+                canvasCtx,
+                canvas,
+                width,
+                height,
+                backgroundColor,
+                strokeColor,
+                buffer
+              );
+              const test = buffer => {
+                console.log("test fxn called", buffer);
+              };
+              test(buffer);
+            })
+            .catch(err => {
+              console.log(err, " at audio decode and viz");
+            });
+        };
+        test1(arrayBuff);
+      })
+      .catch(function(err) {
+        // error
+      });
   };
 
   onData = recordedBlob => {
@@ -158,6 +210,7 @@ export default class ReactMic extends Component {
                         onBlock={this.onBlock}
                         onPause={this.onPause}
                         strokeColor="#07cf89"
+                        setRef={this.setRef}
                       />
                     </div>
                     <div className="play-progress-line"></div>

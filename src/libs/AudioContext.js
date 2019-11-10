@@ -16,9 +16,12 @@ const AudioContext = {
   },
 
   decodeAudioData(audioData) {
-    audioCtx.decodeAudioData(audioData).then(function(decodedData) {
-      // use the decoded data here
-    });
+    return audioCtx.decodeAudioData(audioData);
+
+    // above fxn return a promise with can be used as below eg.
+    // audioCtx.decodeAudioData(audioData).then(function(buffer) {
+    //   // use the decoded data here
+    // });
   }
 };
 
