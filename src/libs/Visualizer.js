@@ -13,7 +13,7 @@ const Visualizer = {
     buffer
   ) {
     console.log("playerSineWave in ");
-   
+
     const BaseAudioContext = AudioContext.getAudioContext();
     var audioBufferSouceNode = BaseAudioContext.createBufferSource();
 
@@ -26,7 +26,6 @@ const Visualizer = {
     //then assign the buffer to the buffer source node
     audioBufferSouceNode.buffer = buffer;
 
-    console.log(buffer, "buffyyyy yyy");
     audioBufferSouceNode.start(0); //play the audio
 
     const bufferLength = analyser.fftSize;
@@ -36,7 +35,6 @@ const Visualizer = {
 
     function draw() {
       drawVisual = requestAnimationFrame(draw);
-      console.log(drawVisual, "drawVisual ss");
 
       analyser = AudioContext.getAnalyser();
 

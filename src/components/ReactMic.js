@@ -58,43 +58,29 @@ export default class ReactMic extends Component {
     blobToArrayBuffer(blobObject)
       .then(function(arrayBuff) {
         console.log(arrayBuff, "xxx xx ");
-        const test1 = arrayBuff => {
-          console.log("test fxn called", arrayBuff);
 
-          const canvas = this.canvasRef;
-          const canvasCtx = canvas.getContext("2d");
-          let width = 1366;
-          let height = 120;
-          let backgroundColor = "";
-          let strokeColor = "#07cf89";
-          const test1 = arrayBuff => {
-            console.log("test fxn called", arrayBuff);
-          };
-          test1(arrayBuff);
-          AudioContext.decodeAudioData(arrayBuff)
-            .then(buffer => {
-              Visualizer.playerSineWave(
-                canvasCtx,
-                canvas,
-                width,
-                height,
-                backgroundColor,
-                strokeColor,
-                buffer
-              );
-              const test = buffer => {
-                console.log("test fxn called", buffer);
-              };
-              test(buffer);
-            })
-            .catch(err => {
-              console.log(err, " at audio decode and viz");
-            });
-        };
-        test1(arrayBuff);
+        return AudioContext.decodeAudioData(arrayBuff);
       })
-      .catch(function(err) {
-        // error
+      .then(buffer => {
+        console.log("in second then ", buffer);
+        const canvas = this.canvasRef;
+        const canvasCtx = canvas.getContext("2d");
+        let width = 1366;
+        let height = 120;
+        let backgroundColor = "";
+        let strokeColor = "#07cf89";
+        Visualizer.playerSineWave(
+          canvasCtx,
+          canvas,
+          width,
+          height,
+          backgroundColor,
+          strokeColor,
+          buffer
+        );
+      })
+      .catch(err => {
+        console.log(err, " at audio decode and viz");
       });
   };
 
