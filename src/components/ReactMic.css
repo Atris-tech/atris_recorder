@@ -1251,6 +1251,10 @@
     z-index: 5;
     opacity: 1
   }
+
+  .voice-recorder.allow_mic .audio-editor {
+    visibility: hidden
+  }
   
   .voice-recorder.allow_mic .btn-record,.voice-recorder.allow_mic .press-mic-message {
     visibility: hidden;
@@ -1298,7 +1302,8 @@
     opacity: 0
   }
   
-  .voice-recorder.preview .audio-editor .canvas-and-controls .waveform-canvas-container .play-progress-line,.voice-recorder.preview .audio-editor .canvas-and-controls .waveform-canvas-container .selection-area {
+  .voice-recorder.preview .audio-editor .canvas-and-controls .waveform-canvas-container .play-progress-line,
+  .voice-recorder.preview .audio-editor .canvas-and-controls .waveform-canvas-container .selection-area {
     visibility: visible;
     opacity: 1
   }
@@ -1312,7 +1317,10 @@
     visibility: hidden
   }
   
-  .voice-recorder.preview .audio-editor .canvas-and-controls .control-bars-wrapper,.voice-recorder.preview .audio-editor .controls,.voice-recorder.save .audio-editor .controls .block-save .btn-save .save-processing,.voice-recorder.save .audio-editor .controls .block-save .btn-save .save-processing .save-processing-label {
+  .voice-recorder.preview .audio-editor .canvas-and-controls .control-bars-wrapper,
+  .voice-recorder.preview .audio-editor .controls,
+  .voice-recorder.save .audio-editor .controls .block-save .btn-save .save-processing,
+  .voice-recorder.save .audio-editor .controls .block-save .btn-save .save-processing .save-processing-label {
     visibility: visible;
     opacity: 1
   }

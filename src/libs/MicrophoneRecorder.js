@@ -36,7 +36,7 @@ export class MicrophoneRecorder {
     mediaOptions = options;
   }
 
-  startRecording = () => {
+  startRecording = startRecordCallback => {
     startTime = Date.now();
 
     if (mediaRecorder) {
@@ -60,6 +60,39 @@ export class MicrophoneRecorder {
     } else {
       if (navigator.mediaDevices) {
         console.log("getUserMedia supported.");
+
+        navigator.permissions
+          .query({ name: "microphone" })
+          .then(function(result) {
+            if (result.state == "granted") {
+              console.log("microphone permission granted");
+              if (startRecordCallback) {
+                startRecordCallback(); // setState recording to active
+              }
+            } else if (result.state == "prompt") {
+              console.log("microphone prompt");
+            } else if (result.state == "denied") {
+              console.log("microphone permission denied");
+              if (onBlockCallback) {
+                onBlockCallback();
+              }
+            }
+            result.onchange = function() {
+              console.log("onchange fxn result", result);
+              if (result.state === "granted") {
+                console.log("granted permission");
+                if (startRecordCallback) {
+                  startRecordCallback(); // setState recording to active
+                }
+              }
+              if (result.state === "denied") {
+                console.log("denied permission");
+                if (onBlockCallback) {
+                  onBlockCallback();
+                }
+              }
+            };
+          });
 
         navigator.mediaDevices
           .getUserMedia(constraints)
@@ -166,6 +199,11 @@ export class MicrophoneRecorder {
     if (mediaRecorder) {
       mediaRecorder.pause();
       onPauseCallback();
+    }
+    if (audioCtx.state === "running") {
+      audioCtx.suspend().then(function() {
+        console.log("audio context suspend state");
+      });
     }
   }
 

@@ -33,8 +33,8 @@ export default class CanvasControls extends Component {
       audioBitsPerSecond,
       mimeType
     } = this.props;
-    const { waveform_canvas } = this.refs;
-    const canvas = waveform_canvas;
+    const { visualizer } = this.refs;
+    const canvas = visualizer;
     const canvasCtx = canvas.getContext("2d");
     const options = {
       audioBitsPerSecond: audioBitsPerSecond,
@@ -151,13 +151,15 @@ export default class CanvasControls extends Component {
       onStop,
       width,
       height,
-      onPause
+      onPause,
+      startRecording,
+      recorder_state
     } = this.props;
     const { microphoneRecorder, canvasCtx } = this.state;
 
     if (isRecording) {
-      if (microphoneRecorder) {
-        microphoneRecorder.startRecording();
+      if (microphoneRecorder && recorder_state !== "active" ) {
+        microphoneRecorder.startRecording(startRecording);
       }
     } else {
       if (microphoneRecorder) {
@@ -169,7 +171,7 @@ export default class CanvasControls extends Component {
     return (
       <canvas
         className="waveform-canvas"
-        ref="waveform_canvas"
+        ref="visualizer"
         height={height}
         width={width}
         className={this.props.className}
@@ -192,7 +194,7 @@ CanvasControls.propTypes = {
 };
 
 CanvasControls.defaultProps = {
-  backgroundColor: "#f0f8ff00",
+  backgroundColor: "#1a2e79",
   strokeColor: "#07cf89",
   className: "waveform_canvas",
   audioBitsPerSecond: 128000,

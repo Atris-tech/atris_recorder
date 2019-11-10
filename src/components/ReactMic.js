@@ -18,10 +18,93 @@ let recorderStates = {
 export default class ReactMic extends Component {
   state = {
     recorder_state: recorderStates.wait_record,
-    dialog_settings: false
+    dialog_settings: false,
+    start_request: false,
+    isRecording: false,
+    isPaused: false,
+    blobURL: null
+  };
+
+  startRecording = () => {
+    this.setState({
+      recorder_state: recorderStates.active
+    });
+  };
+
+  stopRecording = () => {
+    this.setState({ isRecording: false });
+  };
+
+  onSave = blobObject => {};
+
+  onStart = () => {
+    console.log("You can tap into the onStart callback");
+  };
+
+  onStop = blobURL => {
+    this.setState({ blobURL: blobURL });
+    console.log(blobURL);
+  };
+
+  onData = recordedBlob => {
+    console.log("ONDATA CALL IS BEING CALLED! ", recordedBlob);
+    // this.sendMessage(recordedBlob);
+  };
+
+  onBlock = () => {
+    // alert("ya blocked me!");
+    this.setState({
+      isRecording: false,
+      recorder_state: recorderStates.allow_mic
+    });
+  };
+
+  onPause = () => {
+    console.log("main onPause");
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (prevState.recorder_state !== this.state.recorder_state) {
+      if (
+        prevState.recorder_state === recorderStates.wait_record &&
+        this.state.recorder_state === recorderStates.active
+        //state wait record to acitve
+      ) {
+        this.setState({
+          isRecording: true,
+          isPaused: false
+        });
+      }
+
+      if (
+        prevState.recorder_state === recorderStates.active_paused &&
+        this.state.recorder_state === recorderStates.active
+        //state active paused to acitve
+      ) {
+        this.setState({
+          isRecording: true,
+          isPaused: false
+        });
+      }
+
+      if (this.state.recorder_state === recorderStates.active_paused) {
+        this.setState({
+          isRecording: true,
+          isPaused: true
+        });
+      }
+      if (this.state.recorder_state === recorderStates.processing) {
+        this.setState({
+          isRecording: false,
+          isPaused: false
+        });
+      }
+    }
   };
 
   render() {
+    const { blobURL, isRecording, isPaused } = this.state;
+
     return (
       <div className="root_padding">
         <div className="vr-voice-recorder-container">
@@ -61,6 +144,20 @@ export default class ReactMic extends Component {
                         className="waveform_canvas"
                         width={1366}
                         height={120}
+                        isRecording={isRecording}
+                        isPaused={isPaused}
+                        backgroundColor="#000"
+                        visualSetting="sinewave"
+                        audioBitsPerSecond={128000}
+                        recorder_state={this.state.recorder_state}
+                        startRecording={this.startRecording}
+                        onStop={this.onStop}
+                        onStart={this.onStart}
+                        onSave={this.onSave}
+                        onData={this.onData}
+                        onBlock={this.onBlock}
+                        onPause={this.onPause}
+                        strokeColor="#07cf89"
                       />
                     </div>
                     <div className="play-progress-line"></div>
@@ -90,11 +187,15 @@ export default class ReactMic extends Component {
                         <div className="save-label">Save</div>
                         <div className="save-processing">
                           <div className="save-processing-bg"></div>
-                          <div className="save-processing-label">Processing...</div>
+                          <div className="save-processing-label">
+                            Processing...
+                          </div>
                         </div>
                       </button>
                       <div className="dropdown">
-                        <button className="btn-save-gdrive">Google Drive</button>
+                        <button className="btn-save-gdrive">
+                          Google Drive
+                        </button>
                         <button className="btn-save-dropbox">Dropbox</button>
                       </div>
                     </div>
@@ -124,26 +225,34 @@ export default class ReactMic extends Component {
                     this.state.recorder_state ==
                       recorderStates.active_paused) &&
                     "active"}`}
-
                   onClick={() => {
                     if (
                       this.state.recorder_state ===
                         recorderStates.active_paused ||
                       this.state.recorder_state === recorderStates.active
+                      //condition for recording active state
                     ) {
                       //means recording stoped, can also do redirect callbacks here
                       this.setState({
                         recorder_state: recorderStates.processing
                       });
-                      //currently moving to preview after 1 sec 
-                      setTimeout(function(){
-                        this.setState({recorder_state:recorderStates.preview});
-                   }.bind(this),1000); 
+                      //currently moving to preview after 1 sec
+                      setTimeout(
+                        function() {
+                          this.setState({
+                            recorder_state: recorderStates.preview
+                          });
+                        }.bind(this),
+                        1000
+                      );
                     } else if (
+                      //condition for first time record state, we do allow mic and if it later allowrd we do active state by callback
+                      // we set isRecording true to start microphone.reco fxn in canvasControls component
                       this.state.recorder_state === recorderStates.wait_record
                     ) {
                       this.setState({
-                        recorder_state: recorderStates.active
+                        recorder_state: recorderStates.allow_mic,
+                        isRecording: true
                       });
                     }
                   }}
