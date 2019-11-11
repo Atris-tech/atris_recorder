@@ -189,8 +189,21 @@ export default class ReactMic extends Component {
             </div>
             <div className="waveform-container">
               <div className="audio-editor">
-                <div className="top-controls">
-                  <button className="btn-quit">
+                <div
+                  className={`top-controls ${this.state.recorder_state ===
+                    recorderStates.preview && "visible"}`}
+                >
+                  <button
+                    className="btn-quit"
+                    onClick={() => {
+                      // Clean up work below
+                      this.setState({
+                        recorder_state: recorderStates.wait_record,
+                        blobURL: null
+                      });
+                      AudioContext.resetAnalyser();
+                    }}
+                  >
                     <img src={cross_icon} alt="quit-icon" />
                   </button>
                 </div>
