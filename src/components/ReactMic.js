@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { blobToArrayBuffer } from "blob-util";
+import { saveAs } from "file-saver";
+
 import "./ReactMic.css";
 import mic_not_allow from "../assets/mic-not-allow.svg";
 import cross_icon from "../assets/cross-icon.svg";
@@ -52,8 +54,8 @@ export default class ReactMic extends Component {
   //TODO: https://stackoverflow.com/a/31653217
 
   onStop = blobObject => {
-    // let blobURL = window.URL.createObjectURL(blobObject);
-    // this.setState({ blobURL: blobURL });
+    let blobURL = window.URL.createObjectURL(blobObject);
+    this.setState({ blobURL: blobURL });
     blobToArrayBuffer(blobObject)
       .then(function(arrayBuff) {
         console.log(arrayBuff, "xxx xx ");
@@ -248,7 +250,12 @@ export default class ReactMic extends Component {
                   </div>
                   <div className="block-save flex">
                     <div className="flex-right">
-                      <button className="btn-save">
+                      <button
+                        className="btn-save"
+                        onClick={() => {
+                          saveAs(this.state.blobURL, "meeting.wav");
+                        }}
+                      >
                         <div className="save-label">Save</div>
                         <div className="save-processing">
                           <div className="save-processing-bg"></div>
