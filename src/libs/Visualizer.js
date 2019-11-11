@@ -10,7 +10,8 @@ const Visualizer = {
     height,
     backgroundColor,
     strokeColor,
-    buffer
+    buffer,
+    audioEndCallBack
   ) {
     console.log("playerSineWave in ");
 
@@ -27,6 +28,8 @@ const Visualizer = {
     audioBufferSouceNode.buffer = buffer;
 
     audioBufferSouceNode.start(0); //play the audio
+
+    audioBufferSouceNode.onended = audioEndCallBack;
 
     const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);

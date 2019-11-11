@@ -25,7 +25,8 @@ export default class ReactMic extends Component {
     start_request: false,
     isRecording: false,
     isPaused: false,
-    blobURL: null
+    blobURL: null,
+    audioViz_playing: false
   };
 
   startRecording = () => {
@@ -48,13 +49,11 @@ export default class ReactMic extends Component {
     this.canvasRef = childRef;
   };
 
+  //TODO: https://stackoverflow.com/a/31653217
+
   onStop = blobObject => {
     // let blobURL = window.URL.createObjectURL(blobObject);
-
     // this.setState({ blobURL: blobURL });
-    /* Use the await keyword to wait for the Promise to resolve */
-    // console.log(blobObject, "before array buff");
-
     blobToArrayBuffer(blobObject)
       .then(function(arrayBuff) {
         console.log(arrayBuff, "xxx xx ");
@@ -62,26 +61,45 @@ export default class ReactMic extends Component {
         return AudioContext.decodeAudioData(arrayBuff);
       })
       .then(buffer => {
-        console.log("in second then ", buffer);
-        const canvas = this.canvasRef;
-        const canvasCtx = canvas.getContext("2d");
-        let width = 1366;
-        let height = 120;
-        let backgroundColor = "";
-        let strokeColor = "#07cf89";
-        Visualizer.playerSineWave(
-          canvasCtx,
-          canvas,
-          width,
-          height,
-          backgroundColor,
-          strokeColor,
-          buffer
-        );
+        this.setState({
+          buffer_audioData: buffer
+        });
       })
       .catch(err => {
         console.log(err, " at audio decode and viz");
       });
+  };
+
+  audioViz_play = () => {
+    const { buffer_audioData } = this.state;
+    this.setState({
+      audioViz_playing: true
+    });
+
+    const canvas = this.canvasRef;
+    const canvasCtx = canvas.getContext("2d");
+    let width = 1366;
+    let height = 120;
+    let backgroundColor = "";
+    let strokeColor = "#07cf89";
+
+    console.log(new Date(), "time");
+
+    const audioEndCallBack = () => {
+      this.setState({
+        audioViz_playing: false
+      });
+    };
+    Visualizer.playerSineWave(
+      canvasCtx,
+      canvas,
+      width,
+      height,
+      backgroundColor,
+      strokeColor,
+      buffer_audioData,
+      audioEndCallBack
+    );
   };
 
   onData = recordedBlob => {
@@ -210,7 +228,15 @@ export default class ReactMic extends Component {
                 </div>
                 <div className="controls flex">
                   <div className="flex-1">
-                    <button className="play-button">
+                    <button
+                      className={`play-button ${this.state.audioViz_playing &&
+                        "playing"}`}
+                      onClick={() => {
+                        if (this.state.audioViz_playing === false) {
+                          this.audioViz_play();
+                        }
+                      }}
+                    >
                       <div className="tooltip">
                         <span>Play</span>
                         <span className="space">Space</span>
