@@ -44,7 +44,6 @@ export default class ReactMic extends Component {
   onSave = blobObject => {};
 
   onStart = () => {
-    console.log("You can tap into the onStart callback");
   };
 
   setRef = childRef => {
