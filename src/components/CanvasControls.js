@@ -78,9 +78,9 @@ export default class CanvasControls extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.isPaused == false) {
+    if (prevProps.isPaused === false) {
       if (this.state.microphoneRecorder) {
-        if (this.props.isPaused == true) {
+        if (this.props.isPaused === true) {
           console.log(this.state, "now pause called");
 
           this.state.microphoneRecorder.pauseRecording();
@@ -88,9 +88,9 @@ export default class CanvasControls extends Component {
       }
     }
 
-    if (prevProps.isPaused == true) {
+    if (prevProps.isPaused === true) {
       if (this.state.microphoneRecorder) {
-        if (this.props.isPaused == false) {
+        if (this.props.isPaused === false) {
           console.log(this.state, "now xx resume called");
 
           this.state.microphoneRecorder.resumeRecording();
