@@ -11,12 +11,16 @@ const Visualizer = {
     backgroundColor,
     strokeColor,
     buffer,
-    audioEndCallBack
+    audioEndCallBack,
+    setAudioBufferSourceNode,
+    playTime // have value null when being played for first time, else containg playing offset
   ) {
     console.log("playerSineWave in ");
 
     const BaseAudioContext = AudioContext.getAudioContext();
     var audioBufferSouceNode = BaseAudioContext.createBufferSource();
+
+    setAudioBufferSourceNode(audioBufferSouceNode);
 
     let analyser = AudioContext.getAnalyser();
 
@@ -27,7 +31,7 @@ const Visualizer = {
     //then assign the buffer to the buffer source node
     audioBufferSouceNode.buffer = buffer;
 
-    audioBufferSouceNode.start(0); //play the audio
+    audioBufferSouceNode.start(0, playTime); //play the audio
 
     audioBufferSouceNode.onended = audioEndCallBack;
 

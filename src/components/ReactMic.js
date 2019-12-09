@@ -28,7 +28,12 @@ export default class ReactMic extends Component {
     isRecording: false,
     isPaused: false,
     blobURL: null,
-    audioViz_playing: false
+    audioViz_playing: false,
+    audioBufferSourceNode: null, // used to pause, resume and play the final player,
+    audioPlayer_pausedAt: 0,
+    audioPlayer_startedAt: null,
+    audioPlayer_paused: true, // initially player is not playing, means its paused
+    audioPlayer_resume: false
   };
 
   startRecording = () => {
@@ -43,8 +48,7 @@ export default class ReactMic extends Component {
 
   onSave = blobObject => {};
 
-  onStart = () => {
-  };
+  onStart = () => {};
 
   setRef = childRef => {
     this.canvasRef = childRef;
@@ -71,11 +75,13 @@ export default class ReactMic extends Component {
       });
   };
 
-  audioViz_play = () => {
+  audioPlayer_play = () => {
     const { buffer_audioData } = this.state;
     this.setState({
       audioViz_playing: true
     });
+
+    console.log(buffer_audioData.duration, "xx x112");
 
     const canvas = this.canvasRef;
     const canvasCtx = canvas.getContext("2d");
@@ -87,20 +93,96 @@ export default class ReactMic extends Component {
     console.log(new Date(), "time");
 
     const audioEndCallBack = () => {
+      let totalAudioTime = buffer_audioData.duration * 1000;
       this.setState({
-        audioViz_playing: false
+        audioPlayer_paused: true
+      });
+
+      let timeOffset =
+        this.state.audioPlayer_pausedAt +
+        Date.now() -
+        this.state.audioPlayer_startedAt;
+
+      console.log(timeOffset, "timeOffset");
+
+      console.log("teeest", timeOffset - totalAudioTime);
+      if (Math.abs(timeOffset - totalAudioTime) < 50) {
+        this.setState({
+          audioPlayer_resume: false,
+          audioPlayer_pausedAt: 0
+        });
+      }
+    };
+
+    const setAudioBufferSourceNode = sourceNode => {
+      this.setState({
+        audioBufferSourceNode: sourceNode
       });
     };
-    Visualizer.playerSineWave(
-      canvasCtx,
-      canvas,
-      width,
-      height,
-      backgroundColor,
-      strokeColor,
-      buffer_audioData,
-      audioEndCallBack
-    );
+
+    if (this.state.audioPlayer_resume === false) {
+      //audio is being played first time
+
+      this.setState({
+        audioPlayer_startedAt: Date.now()
+      });
+
+      let playTimeOffset = 0;
+
+      Visualizer.playerSineWave(
+        canvasCtx,
+        canvas,
+        width,
+        height,
+        backgroundColor,
+        strokeColor,
+        buffer_audioData,
+        audioEndCallBack,
+        setAudioBufferSourceNode,
+        playTimeOffset
+      );
+    }
+
+    if (this.state.audioPlayer_resume === true) {
+      this.setState({
+        audioPlayer_startedAt: Date.now()
+      });
+      let { audioBufferSourceNode } = this.state;
+
+      // audioBufferSourceNode.start(0, this.state.audioPlayer_pausedAt / 1000);
+      console.log("xxx 111", this.state.audioPlayer_pausedAt);
+
+      let playTimeOffset = this.state.audioPlayer_pausedAt / 1000;
+      Visualizer.playerSineWave(
+        canvasCtx,
+        canvas,
+        width,
+        height,
+        backgroundColor,
+        strokeColor,
+        buffer_audioData,
+        audioEndCallBack,
+        setAudioBufferSourceNode,
+        playTimeOffset
+      );
+    }
+  };
+
+  audioPlayer_pause = () => {
+    let { audioBufferSourceNode } = this.state;
+    audioBufferSourceNode.stop(0);
+
+    let timeOffset =
+      this.state.audioPlayer_pausedAt +
+      Date.now() -
+      this.state.audioPlayer_startedAt;
+    this.setState({
+      audioPlayer_pausedAt: timeOffset,
+      audioPlayer_paused: true,
+      audioPlayer_resume: true
+    });
+
+    console.log("audioPlayer_resume: true");
   };
 
   onData = recordedBlob => {
@@ -243,11 +325,43 @@ export default class ReactMic extends Component {
                 <div className="controls flex">
                   <div className="flex-1">
                     <button
-                      className={`play-button ${this.state.audioViz_playing &&
-                        "playing"}`}
+                      className={`play-button ${!this.state
+                        .audioPlayer_paused && "playing"}`}
                       onClick={() => {
-                        if (this.state.audioViz_playing === false) {
-                          this.audioViz_play();
+                        if (this.state.audioPlayer_paused === true) {
+                          //audio not playing
+                          this.setState(
+                            {
+                              audioPlayer_paused: false
+                            },
+                            () => {
+                              this.audioPlayer_play();
+                            }
+                          );
+
+                          console.log(
+                            "this.audioPlayer_play();() called",
+                            this.state.audioPlayer_paused,
+                            "1"
+                          );
+                        }
+
+                        if (this.state.audioPlayer_paused === false) {
+                          //audio is being played
+                          this.setState(
+                            {
+                              audioPlayer_paused: true
+                            },
+                            () => {
+                              this.audioPlayer_pause();
+                            }
+                          );
+
+                          console.log(
+                            "this.audioPlayer_pause();() called",
+                            this.state.audioPlayer_paused,
+                            "2"
+                          );
                         }
                       }}
                     >
@@ -330,8 +444,8 @@ export default class ReactMic extends Component {
                         1000
                       );
                     } else if (
-                      //condition for first time record state, we do allow mic and if it later allowrd we do active state by callback
-                      // we set isRecording true to start microphone.reco fxn in canvasControls component
+                      //condition for first time record state, we do allow mic and if it later allowed we do active state by callback
+                      // we set isRecording true to start microphone.record fxn in canvasControls component
                       this.state.recorder_state === recorderStates.wait_record
                     ) {
                       this.setState({
